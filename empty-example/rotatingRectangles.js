@@ -1,33 +1,32 @@
 let config = {
-  frameRate: 5,
-  cells_per_row: 250,
-  y_axis_enum: 1,
-  x_axis_enum: 2
+    numCols: 8,
+    numRows: 6 
 }
 
 /** MAIN METHODS **/
 function setup() {
-  createCanvas(500, 500);
+  createCanvas(700, 600);
+}
+
+function drawRectangleRotation(x = 0,y = 0) {
+    let recWidth = 60;
+    let recHeight = 10;
+    let aX = (recWidth / 2) + x;
+    let aY = (recWidth / 2) + y;
+    let aAngle = atan2(mouseY - aY, mouseX - aX);
+    translate(aX, aY);
+    rotate(aAngle);
+    rect((-recWidth / 2), (-recHeight / 2), recWidth, recHeight);
 }
 
 function draw() {
     background(204);
 
-    push();
-        let aX = (width / 2) - 200;
-        let aY = (height /2);
-        let aAngle = atan2(mouseY - aY, mouseX - aX);
-        translate(aX, aY);
-        rotate(aAngle);
-        rect(-30, -5, 60, 10);
-    pop();
-
-    push();
-        let bX = (width / 2) + 200;
-        let bY = (height /2);
-        let bAngle = atan2(mouseY - bY, mouseX - bX);
-        translate(bX, bY);
-        rotate(bAngle);
-        rect(-30, -5, 60, 10);
-    pop();
+    for (let i = 0; i < config.numCols; i++){
+        for (let j = 0; j < config.numRows; j++) {
+            push();
+            drawRectangleRotation(70 * i, 70 * j);
+            pop();
+        }
+    }
 }
