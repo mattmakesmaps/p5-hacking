@@ -2,11 +2,13 @@ let config = {
     numCols: 20,
     numRows: 15,
     recWidth: 30,
-    recHeight: 5
+    recHeight: 5 
 }
 
 function setup() {
     createCanvas(700, 600);
+    // stroke(255,255,255);
+    noStroke();
 }
 
 function calcColor(val) {
@@ -34,7 +36,7 @@ function drawRectangleRotation(x = 0, y = 0) {
 }
 
 function draw() {
-    background(204);
+    background(65);
 
     for (let i = 0; i < config.numCols; i++) {
         for (let j = 0; j < config.numRows; j++) {
