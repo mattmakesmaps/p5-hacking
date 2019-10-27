@@ -24,9 +24,12 @@ function drawRectangleRotation(x = 0, y = 0) {
     let aX = (config.recWidth / 2) + x;
     let aY = (config.recWidth / 2) + y;
     let aAngle = atan2(mouseY - aY, mouseX - aX);
+    // REF: https://stats.stackexchange.com/questions/70801/how-to-normalize-data-to-0-1-range
+    // The range for atan2() is -PI to PI;
+    let normalizedAngle = (aAngle - -PI) / TWO_PI;
     translate(aX, aY);
     rotate(aAngle);
-    fill(calcColor(aAngle));
+    fill(calcColor(normalizedAngle));
     rect(
         (-config.recWidth / 2),
         (-config.recHeight / 2),
