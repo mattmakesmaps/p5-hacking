@@ -14,8 +14,8 @@ function setup() {
 
 function calcColor(val) {
     // REF: https://p5js.org/reference/#/p5/lerpColor
-    let from = color(255, 105, 180);
-    let to = color(0, 255, 255);
+    let from = color(29, 161, 255);
+    let to = color(255, 123, 29);
     colorMode(RGB); // Try changing to HSB.
     return lerpColor(from, to, val);
 }
@@ -40,6 +40,7 @@ function drawRectangleRotation(x = 0, y = 0) {
     // let normalizedAngle = (aAngle - -PI) / TWO_PI;
     // `map()` is analagous to above
     let normalizedAngle = map(aAngle, -PI, PI, 0, 1);
+    let noiseyNormalizedAngle = noiseCalc * normalizedAngle;
 
     translate(aX, aY);
     rotate(jitter);
