@@ -4,12 +4,16 @@ let config = {
 }
 
 /**
- * I have to add these consts values because I can't access
- * the p5.js consts at this point in the program execution.
+ * I have to add these `const` values because I can't access
+ * the p5.js `const` at this point in the program execution.
  */
 const QUARTER_PI = 0.78539816339;
 const TWO_PI = 6.28318530718;
 
+/**
+ * TODO: What scoping rules require that we need to use `var`
+ * versus `const` or `let`?
+ */
 var jitterScale = QUARTER_PI;
 var jitterScaleMin = -TWO_PI;
 var jitterScaleMax = TWO_PI;
