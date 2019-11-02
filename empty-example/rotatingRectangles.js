@@ -1,11 +1,31 @@
 let config = {
-    recWidth: 30,
-    recHeight: 5,
     noiseSeed: 0.0,
     padding: 10
 }
 
+/**
+ * I have to add these consts values because I can't access
+ * the p5.js consts at this point in the program execution.
+ */
+const QUARTER_PI = 0.78539816339;
+const TWO_PI = 6.28318530718;
+
+var jitterScale = QUARTER_PI;
+var jitterScaleMin = -TWO_PI;
+var jitterScaleMax = TWO_PI;
+var jitterScaleStep = 0.1;
+
+var recHeight = 5;
+var recHeightStep = 1;
+var recWidth = 30;
+var recWidthStep = 2;
+
+var seedColorFrom = [29, 161, 255];
+var seedColorTo = [255, 123, 29];
+
 function setup() {
+    gui = createGui('jitter');
+    gui.addGlobals('jitterScale', 'recWidth', 'recHeight', 'seedColorFrom', 'seedColorTo');
     createCanvas(windowWidth, windowHeight);
     // stroke(255,255,255);
     noStroke();
@@ -13,16 +33,15 @@ function setup() {
 
 function calcColor(val) {
     // REF: https://p5js.org/reference/#/p5/lerpColor
-    let from = color(29, 161, 255);
-    let to = color(255, 123, 29);
-    colorMode(RGB); // Try changing to HSB.
-    return lerpColor(from, to, val);
+    let colorFrom = color(seedColorFrom);
+    let colorTo = color(seedColorTo);
+    return lerpColor(colorFrom, colorTo, val);
 }
 
 function drawRectangleRotation(x = 0, y = 0) {
     // REF: https://p5js.org/reference/#/p5/atan2
-    let aX = (config.recWidth / 2) + x;
-    let aY = (config.recWidth / 2) + y;
+    let aX = (recWidth / 2) + x;
+    let aY = (recWidth / 2) + y;
     let aAngle = atan2(mouseY - aY, mouseX - aX);
 
     config.noiseSeed = config.noiseSeed + 0.0002;
@@ -31,7 +50,6 @@ function drawRectangleRotation(x = 0, y = 0) {
     // Map the noiseCalc value to a range
     // that is quarter pi above or below current aAngle
     // Then rotate by that.
-    const jitterScale = QUARTER_PI;
     let jitter = map(noiseCalc, 0, 1, aAngle - jitterScale, aAngle + jitterScale);
 
     // REF: https://stats.stackexchange.com/questions/70801/how-to-normalize-data-to-0-1-range
@@ -45,16 +63,16 @@ function drawRectangleRotation(x = 0, y = 0) {
     rotate(jitter);
     fill(calcColor(normalizedAngle));
     rect(
-        (-config.recWidth / 2),
-        (-config.recHeight / 2),
-        config.recWidth,
-        config.recHeight
+        (-recWidth / 2),
+        (-recHeight / 2),
+        recWidth,
+        recHeight
     );
 }
 
 function draw() {
     background(65);
-    let spacing = config.recWidth + config.padding;
+    let spacing = recWidth + config.padding;
     let numCols = windowWidth / spacing;
     let numRows = windowHeight / spacing;
 
