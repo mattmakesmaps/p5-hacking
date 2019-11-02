@@ -1,13 +1,12 @@
 let config = {
-    numCols: 20,
-    numRows: 15,
     recWidth: 30,
     recHeight: 5,
-    noiseSeed: 0.0
+    noiseSeed: 0.0,
+    padding: 10
 }
 
 function setup() {
-    createCanvas(700, 600);
+    createCanvas(windowWidth, windowHeight);
     // stroke(255,255,255);
     noStroke();
 }
@@ -55,13 +54,20 @@ function drawRectangleRotation(x = 0, y = 0) {
 
 function draw() {
     background(65);
+    let spacing = config.recWidth + config.padding;
+    let numCols = windowWidth / spacing;
+    let numRows = windowHeight / spacing;
 
-    for (let i = 0; i < config.numCols; i++) {
-        for (let j = 0; j < config.numRows; j++) {
+    for (let i = 0; i < numCols; i++) {
+        for (let j = 0; j < numRows; j++) {
             push();
-            let padding = config.recWidth + 10;
-            drawRectangleRotation(padding * i, padding * j);
+            drawRectangleRotation(spacing * i, spacing * j);
             pop();
         }
     }
+}
+
+// magically called when a window is resized
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }
