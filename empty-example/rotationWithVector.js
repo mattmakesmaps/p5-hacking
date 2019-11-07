@@ -10,16 +10,40 @@ function setup() {
     createCanvas(700, 600);
 }
 
+function linePoint(x1, y1, x2, y2, px, py) {
+
+  // get distance from the point to the two ends of the line
+  d1 = dist(px,py, x1,y1);
+  d2 = dist(px,py, x2,y2);
+
+  // get the length of the line
+  lineLen = dist(x1,y1, x2,y2);
+
+  // since floats are so minutely accurate, add
+  // a little buffer zone that will give collision
+  buffer = 0.1;    // higher # = less accurate
+
+  // if the two distances are equal to the line's 
+  // length, the point is on the line!
+  // note we use the buffer here to give a range, 
+  // rather than one #
+  if (d1+d2 >= lineLen-buffer && d1+d2 <= lineLen+buffer) {
+    return true;
+  }
+  return false;
+}
+
 function draw() {
     background(65);
-    stroke(0);
-    strokeWeight(3);
-    fill(0);
+    stroke(255);
+    fill(255);
 
-    rect(100,100,10,10);
 
     let lineLength = 100;
     translate(width/2,height/2);
+    strokeWeight(10);
+    let pVect = createVector(10,10);
+    point(pVect.x, pVect.y);
 
     // Create a 100 pixel line.
     let v1 = createVector(0 - (lineLength/2), 0);
@@ -32,8 +56,27 @@ function draw() {
         mouseY - (height/2)
     );
 
-    // Rotate based on mouse heading.
-    rotate(mouseVector.heading());
+
+    strokeWeight(0);
+    text('Heading: ' + mouseVector.heading(), 100, 100);
+    text('v1 x/y: ' + v1.x + ', ' + v1.y, 100, 120);
+    text('v2 x/y: ' + v2.x + ', ' + v2.y, 100, 140);
+    strokeWeight(3);
+
+    // rather the rotating the canvas, we rotate the vectors.
+    v1.rotate(mouseVector.heading());
+    v2.rotate(mouseVector.heading());
+
+    let hit = linePoint(v1.x,v1.y, v2.x, v2.y, pVect.x,pVect.y);
+    if (hit) {
+        // pVect.setMag(3);
+        // pVect.x = pVect.x + pVect.mag();
+        // pVect.y = pVect.y + pVect.mag();
+        stroke(255,150,0, 150);
+    }
+    else {
+        stroke(0,150,255, 150);
+    }
     
     // Draw the line now that we've rotated the canvas.
     let someLine = line(v1.x,v1.y,v2.x,v2.y);
