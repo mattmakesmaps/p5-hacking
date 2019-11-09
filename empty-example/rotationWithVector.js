@@ -5,16 +5,41 @@
  * A third vector is created representing the mouse
  * position, which is used to rotate the line.
  */
-let ball = {
-    hit: false,
-    position: null,
-    velocity: 5,
-    speed: 3.5
+
+class Ball {
+    constructor(x, y, color) {
+        this.hit = false,
+        this.x = x,
+        this.y = y,
+        this.position = null,
+        this.velocity= 5,
+        this.speed= 3.5
+        this.color = color;
+    }
+
+    draw() {
+        fill(this.color);
+        stroke(this.color);
+        strokeWeight(10);
+        point(this.position.x, this.position.y);
+    }
+
+    updatePosition() {
+        if (!this.position) {
+            this.position = createVector(this.x, this.y);
+        }
+
+        if (this.hit) {
+            this.position.add(this.velocity);
+        }
+    }
 }
+
+let b1;
 
 function setup() {
     createCanvas(700, 600);
-    ball.position = createVector(20, 20);
+    b1 = new Ball(25,25, color(255, 150, 0));
 }
 
 function linePoint(x1, y1, x2, y2, px, py) {
@@ -42,14 +67,10 @@ function linePoint(x1, y1, x2, y2, px, py) {
 
 function draw() {
     background(65);
-    stroke(255);
-    fill(255);
-
 
     let lineLength = 100;
     translate(width/2,height/2);
-    strokeWeight(10);
-    point(ball.position.x, ball.position.y);
+    b1.updatePosition();
 
     // Create a 100 pixel line.
     let v1 = createVector(0 - (lineLength/2), 0);
@@ -63,33 +84,31 @@ function draw() {
     );
 
 
+    fill(255);
     strokeWeight(0);
     text('Heading: ' + mouseVector.heading(), 100, 100);
     text('v1 x/y: ' + v1.x + ', ' + v1.y, 100, 120);
     text('v2 x/y: ' + v2.x + ', ' + v2.y, 100, 140);
+    text('b1.position x/y: ' + b1.position.x + ', ' + b1.position.y, 100, 180);
     // text('pVect x/y: ' + pVect.x + ', ' + pVect.y, 100, 160);
-    text('ball.position x/y: ' + ball.position.x + ', ' + ball.position.y, 100, 180);
-    strokeWeight(3);
 
     // rather the rotating the canvas, we rotate the vectors.
     v1.rotate(mouseVector.heading());
     v2.rotate(mouseVector.heading());
 
-    let hit = linePoint(v1.x,v1.y, v2.x, v2.y, ball.position.x,ball.position.y);
+    let hit = linePoint(v1.x,v1.y, v2.x, v2.y, b1.position.x,b1.position.y);
     if (hit) {
-        ball.hit = true;
-        // ball.position.x = ball.position.x + 1;
-        // ball.position.y = ball.position.y + 0.5;
+        b1.hit = true;
         stroke(255,150,0, 150);
     }
     else {
         stroke(0,150,255, 150);
     }
-
-    if (ball.hit) {
-        ball.position.add(ball.velocity);
-    }
-    
     // Draw the line now that we've rotated the canvas.
+    strokeWeight(3);
     let someLine = line(v1.x,v1.y,v2.x,v2.y);
+
+    b1.draw();
+
+    
 }
