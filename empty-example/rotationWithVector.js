@@ -25,7 +25,7 @@ class Paddle {
     draw() {
         fill(this.color);
         stroke(this.color);
-        strokeWeight(3);
+        strokeWeight(10);
         line(this.ends[0].x,
             this.ends[0].y,
             this.ends[1].x,
@@ -65,8 +65,8 @@ class Ball {
             this.y = y,
             this.position = null,
             this.velocity = 5,
-            this.speed = 3.5
-        this.color = color;
+            this.speed = 3.5,
+            this.color = color
     }
 
     draw() {
@@ -87,12 +87,18 @@ class Ball {
     }
 }
 
-let b1;
+let balls = [];
 let paddle;
 
 function setup() {
     createCanvas(700, 600);
-    b1 = new Ball(25, 25, color(255, 150, 0));
+    let ballCount = 500;
+    for (let i = 0; i < ballCount; i++) {
+        let x_cord = map(random(), 0, 1, -(width / 2), (width / 2));
+        let y_cord = map(random(), 0, 1, -(height / 2), (height / 2));
+        let ball_color = color(255, 150, 0);
+        balls.push(new Ball(x_cord, y_cord, ball_color));
+    }
 }
 
 function draw() {
@@ -105,27 +111,32 @@ function draw() {
         mouseX - (width / 2),
         mouseY - (height / 2)
     );
-    
+
     // The implementation should be updated to not require a new
     // Paddle each call to draw().
-    paddle = new Paddle(0, 0, color(200, 175, 50), 100);
+    paddle = new Paddle(0, 0, color('teal'), 500);
     paddle.setup();
 
     paddle.updatePosition(mouseVector);
-    b1.updatePosition();
+    for (let i = 0; i < balls.length; i++) {
+        balls[i].updatePosition();
+    }
 
-    if (paddle.intersectsPoints(b1.position.x, b1.position.y)) {
-        b1.hit = true;
-        paddle.color = color('red');
+    for (let i = 0; i < balls.length; i++) {
+        if (paddle.intersectsPoints(balls[i].position.x, balls[i].position.y)) {
+            balls[i].hit = true;
+            paddle.color = color('red');
+        }
+        balls[i].draw();
     }
 
     paddle.draw();
-    b1.draw();
 
     fill(255);
     strokeWeight(0);
     text('Mouse Heading: ' + mouseVector.heading(), 100, 100);
     text('paddle.ends[0] x/y: ' + paddle.ends[0].x + ', ' + paddle.ends[0].y, 100, 120);
     text('paddle.ends[1] x/y: ' + paddle.ends[1].x + ', ' + paddle.ends[1].y, 100, 140);
-    text('b1.position x/y: ' + b1.position.x + ', ' + b1.position.y, 100, 180);
+    text('Frame Rate: ' + floor(frameRate()), 100, 160);
+    // text('b1.position x/y: ' + b1.position.x + ', ' + b1.position.y, 100, 180);
 }
