@@ -92,7 +92,7 @@ let paddle;
 
 function setup() {
     createCanvas(700, 600);
-    let ballCount = 500;
+    let ballCount = 1000;
     for (let i = 0; i < ballCount; i++) {
         let x_cord = map(random(), 0, 1, -(width / 2), (width / 2));
         let y_cord = map(random(), 0, 1, -(height / 2), (height / 2));
@@ -124,7 +124,9 @@ function draw() {
 
     for (let i = 0; i < balls.length; i++) {
         if (paddle.intersectsPoints(balls[i].position.x, balls[i].position.y)) {
-            balls[i].hit = true;
+            // note how we're toggling not just setting to true
+            // just for fum.
+            balls[i].hit = !balls[i].hit;
             paddle.color = color('red');
         }
         balls[i].draw();
@@ -133,10 +135,11 @@ function draw() {
     paddle.draw();
 
     fill(255);
-    strokeWeight(0);
-    text('Mouse Heading: ' + mouseVector.heading(), 100, 100);
-    text('paddle.ends[0] x/y: ' + paddle.ends[0].x + ', ' + paddle.ends[0].y, 100, 120);
-    text('paddle.ends[1] x/y: ' + paddle.ends[1].x + ', ' + paddle.ends[1].y, 100, 140);
-    text('Frame Rate: ' + floor(frameRate()), 100, 160);
-    // text('b1.position x/y: ' + b1.position.x + ', ' + b1.position.y, 100, 180);
+    stroke(0);
+    strokeWeight(5);
+
+    text('Mouse Heading: ' + mouseVector.heading(), 50, 100);
+    text('paddle.ends[0] x/y: ' + floor(paddle.ends[0].x) + ', ' + floor(paddle.ends[0].y), 50, 120);
+    text('paddle.ends[1] x/y: ' + floor(paddle.ends[1].x) + ', ' + floor(paddle.ends[1].y), 50, 140);
+    text('Frame Rate: ' + floor(frameRate()), 50, 160);
 }
