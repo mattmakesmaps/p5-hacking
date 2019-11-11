@@ -61,10 +61,11 @@ class Paddle {
 class Ball {
     constructor(x, y, color) {
         this.hit = false,
-            this.x = x,
-            this.y = y,
-            this.position = null,
-            this.velocity = 5,
+            // this.acceleration = createVector(0,0),
+            // Acceleration is random!
+            this.acceleration = p5.Vector.random2D(),
+            this.velocity = createVector(0, 0),
+            this.position = createVector(x, y),
             this.speed = 3.5,
             this.color = color
     }
@@ -77,11 +78,10 @@ class Ball {
     }
 
     updatePosition() {
-        if (!this.position) {
-            this.position = createVector(this.x, this.y);
-        }
-
         if (this.hit) {
+            // will this slow down accelleration?
+            this.acceleration = this.acceleration.mult(0.75);
+            this.velocity.add(this.acceleration);
             this.position.add(this.velocity);
         }
     }
