@@ -61,12 +61,14 @@ class Paddle {
 class Ball {
     constructor(x, y, color) {
         this.hit = false,
+            // No Acceleration!
             // this.acceleration = createVector(0,0),
             // Acceleration is random!
-            this.acceleration = p5.Vector.random2D(),
+            // this.acceleration = p5.Vector.random2D(),
+            // Acceleration Towards the Mouse! (see _accellerationToMous())
+            this.acceleration = createVector(0, 0),
             this.velocity = createVector(0, 0),
             this.position = createVector(x, y),
-            this.speed = 3.5,
             this.color = color
     }
 
@@ -77,10 +79,29 @@ class Ball {
         point(this.position.x, this.position.y);
     }
 
+    _accellerationToMouse() {
+        /**
+         * To set accelleration to follow the direction
+         * of the mouse, we set accelleration to a vector
+         * Accelleration = Mouse Position - Ball Position - (Width/2 , Height/2)
+         * The result vector is then normalized to between 0,1
+         * 
+         * The last is required because of the intial translation, but I
+         * bet could be removed if we use push pop in the main draw().
+         */
+        let mousePos = createVector(mouseX, mouseY);
+        let vecToMousePos = mousePos
+            .sub(this.position)
+            .sub(createVector(width/2, height/2));
+        this.acceleration = vecToMousePos;
+        this.acceleration = this.acceleration.normalize();
+        // will this slow down accelleration?
+        this.acceleration = this.acceleration.mult(0.25);
+    }
+
     updatePosition() {
         if (this.hit) {
-            // will this slow down accelleration?
-            this.acceleration = this.acceleration.mult(0.75);
+            this._accellerationToMouse();
             this.velocity.add(this.acceleration);
             this.position.add(this.velocity);
         }
@@ -91,8 +112,8 @@ let balls = [];
 let paddle;
 
 function setup() {
-    createCanvas(700, 600);
-    let ballCount = 1000;
+    createCanvas(windowWidth, windowHeight);
+    let ballCount = 500;
     for (let i = 0; i < ballCount; i++) {
         let x_cord = map(random(), 0, 1, -(width / 2), (width / 2));
         let y_cord = map(random(), 0, 1, -(height / 2), (height / 2));
@@ -126,7 +147,7 @@ function draw() {
         if (paddle.intersectsPoints(balls[i].position.x, balls[i].position.y)) {
             // note how we're toggling not just setting to true
             // just for fum.
-            balls[i].hit = !balls[i].hit;
+            balls[i].hit = true;
             paddle.color = color('red');
         }
         balls[i].draw();
@@ -141,5 +162,6 @@ function draw() {
     text('Mouse Heading: ' + mouseVector.heading(), 50, 100);
     text('paddle.ends[0] x/y: ' + floor(paddle.ends[0].x) + ', ' + floor(paddle.ends[0].y), 50, 120);
     text('paddle.ends[1] x/y: ' + floor(paddle.ends[1].x) + ', ' + floor(paddle.ends[1].y), 50, 140);
-    text('Frame Rate: ' + floor(frameRate()), 50, 160);
+    text('Ball 0 Accelleration: ' + balls[0].acceleration.x + ', ' + balls[0].acceleration.y, 50, 160);
+    text('Frame Rate: ' + floor(frameRate()), 50, 180);
 }
