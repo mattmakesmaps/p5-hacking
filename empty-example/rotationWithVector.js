@@ -10,14 +10,11 @@ class Paddle {
     constructor(x, y, color, length = 100) {
         this.x = x,
             this.y = y,
-            this.center = null,
+            this.center = createVector(this.x, this.y);
             this.ends = [],
             this.color = color,
             this.length = length
-    }
 
-    setup() {
-        this.center = createVector(this.x, this.y);
         this.ends.push(createVector(this.x - (this.length / 2), this.y));
         this.ends.push(createVector(this.x + (this.length / 2), this.y));
     }
@@ -120,6 +117,7 @@ function setup() {
         let ball_color = color(255, 150, 0);
         balls.push(new Ball(x_cord, y_cord, ball_color));
     }
+    paddle = new Paddle(0, 0, color('teal'), 500);
 }
 
 function draw() {
@@ -135,8 +133,8 @@ function draw() {
 
     // The implementation should be updated to not require a new
     // Paddle each call to draw().
-    paddle = new Paddle(0, 0, color('teal'), 500);
-    paddle.setup();
+    // paddle = new Paddle(0, 0, color('teal'), 500);
+    // paddle.setup();
 
     paddle.updatePosition(mouseVector);
     for (let i = 0; i < balls.length; i++) {
