@@ -133,7 +133,7 @@ let paddle;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    let ballCount = 500;
+    let ballCount = 2000;
     for (let i = 0; i < ballCount; i++) {
         let x_cord = map(random(), 0, 1, -(width / 2), (width / 2));
         let y_cord = map(random(), 0, 1, -(height / 2), (height / 2));
@@ -164,6 +164,7 @@ function draw() {
         balls[i].updatePosition();
     }
 
+    // beginShape(TRIANGLE_FAN);
     for (let i = 0; i < balls.length; i++) {
         if (paddle.intersectsPoints(balls[i].position.x, balls[i].position.y)) {
             // note how we're toggling not just setting to true
@@ -172,7 +173,9 @@ function draw() {
             balls[i].color = color(0,104,183);
         }
         balls[i].draw();
+        // vertex(balls[i].x, balls[i].y);
     }
+    // endShape();
 
     paddle.draw();
 
@@ -180,9 +183,11 @@ function draw() {
     stroke(0);
     strokeWeight(5);
 
-    text('Mouse Heading: ' + mouseVector.heading(), 50, 100);
-    text('paddle.ends[0] x/y: ' + floor(paddle.ends[0].x) + ', ' + floor(paddle.ends[0].y), 50, 120);
-    text('paddle.ends[1] x/y: ' + floor(paddle.ends[1].x) + ', ' + floor(paddle.ends[1].y), 50, 140);
-    text('Ball 0 Accelleration: ' + balls[0].acceleration.x + ', ' + balls[0].acceleration.y, 50, 160);
-    text('Frame Rate: ' + floor(frameRate()), 50, 180);
+    let textLeftEdge = -(windowWidth/2 - 50);
+    let textTopEdge = -(windowHeight/2 - 50);
+    text('Mouse Heading: ' + mouseVector.heading(), textLeftEdge, textTopEdge);
+    text('paddle.ends[0] x/y: ' + floor(paddle.ends[0].x) + ', ' + floor(paddle.ends[0].y), textLeftEdge, textTopEdge + 20);
+    text('paddle.ends[1] x/y: ' + floor(paddle.ends[1].x) + ', ' + floor(paddle.ends[1].y), textLeftEdge, textTopEdge + 40);
+    text('Ball 0 Accelleration: ' + balls[0].acceleration.x + ', ' + balls[0].acceleration.y, textLeftEdge, textTopEdge + 60);
+    text('Frame Rate: ' + floor(frameRate()), textLeftEdge, textTopEdge + 80);
 }
