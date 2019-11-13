@@ -8,15 +8,15 @@
 
 class Paddle {
     constructor(x, y, color, length = 100) {
-        this.x = x,
-            this.y = y,
-            this.center = createVector(this.x, this.y);
+            this.center = createVector(x, y);
             this.ends = [],
             this.color = color,
             this.length = length
 
-        this.ends.push(createVector(this.x - (this.length / 2), this.y));
-        this.ends.push(createVector(this.x + (this.length / 2), this.y));
+        this.ends.push(new Ball(this.center.x - (this.length / 2), this.center.y, color));
+        this.ends.push(new Ball(this.center.x + (this.length / 2), this.center.y), color);
+        this.ends[0].hit = true;
+        this.ends[1].hit = true;
     }
 
     draw() {
@@ -30,8 +30,11 @@ class Paddle {
     }
 
     updatePosition(mouseVector) {
-        this.ends[0].rotate(mouseVector.heading());
-        this.ends[1].rotate(mouseVector.heading());
+        this.ends[0].updatePosition();
+        this.ends[1].updatePosition();
+        this.length = dist(this.ends[0].x, this.ends[0].y, this.ends[1].x, this.ends[1].y);
+        this.center.x = (this.ends[0].x + this.ends[1].x) / 2;
+        this.center.y = (this.ends[0].y + this.ends[1].y) / 2;
     }
 
     intersectsPoints(px, py) {
@@ -67,6 +70,25 @@ class Ball {
             this.velocity = createVector(0, 0),
             this.position = createVector(x, y),
             this.color = color
+            this.topSpeed = 15;
+    }
+
+    // Allows Ball's position to be called like a vector.
+    // e.g. ball.x
+    get x() {
+        return this.position.x;
+    }
+
+    set x(newX) {
+        this.position.x = newX;
+    }
+
+    get y() {
+        return this.position.y;
+    }
+
+    set y(newY) {
+        this.position.y = newY;
     }
 
     draw() {
@@ -100,6 +122,7 @@ class Ball {
         if (this.hit) {
             this._accellerationToMouse();
             this.velocity.add(this.acceleration);
+            this.velocity.limit(this.topSpeed);
             this.position.add(this.velocity);
         }
     }
@@ -114,14 +137,14 @@ function setup() {
     for (let i = 0; i < ballCount; i++) {
         let x_cord = map(random(), 0, 1, -(width / 2), (width / 2));
         let y_cord = map(random(), 0, 1, -(height / 2), (height / 2));
-        let ball_color = color(255, 150, 0);
+        let ball_color = color(229,0,106);
         balls.push(new Ball(x_cord, y_cord, ball_color));
     }
-    paddle = new Paddle(0, 0, color('teal'), 500);
+    paddle = new Paddle(0, 0, color(50,50,50), 500);
 }
 
 function draw() {
-    background(65);
+    background(243,152,0);
     translate(width / 2, height / 2);
 
     // Create a vector representing the translated
@@ -146,7 +169,7 @@ function draw() {
             // note how we're toggling not just setting to true
             // just for fum.
             balls[i].hit = true;
-            paddle.color = color('red');
+            balls[i].color = color(0,104,183);
         }
         balls[i].draw();
     }
