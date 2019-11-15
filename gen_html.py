@@ -46,7 +46,7 @@ if __name__ == "__main__":
         # To be used in index.html
         htmlFilename = jsFilename.replace('.js', '.html')
         htmlLinkElement = htmlTemplateIndexLinkElement.substitute({
-            'relURL': '/examples/' + htmlFilename,
+            'relURL': './examples/' + htmlFilename,
             'exampleName': htmlFilename
         })
         htmlFilesString = htmlFilesString + htmlLinkElement
