@@ -8,6 +8,7 @@ htmlTemplateIndex = Template("""<DOCTYPE html>
     <title>Examples</title>
   </head>
   <body>
+    <h2>Examples</h2>
     <ul>
         ${htmlFiles}
     </ul>
@@ -45,7 +46,7 @@ if __name__ == "__main__":
         # To be used in index.html
         htmlFilename = jsFilename.replace('.js', '.html')
         htmlLinkElement = htmlTemplateIndexLinkElement.substitute({
-            'relURL': 'p5-hacking/examples/' + htmlFilename,
+            'relURL': '/examples/' + htmlFilename,
             'exampleName': htmlFilename
         })
         htmlFilesString = htmlFilesString + htmlLinkElement
