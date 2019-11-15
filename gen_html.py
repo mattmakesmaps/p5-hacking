@@ -4,6 +4,13 @@ from string import Template
 htmlTemplateIndex = Template("""<DOCTYPE html>
 <html lang="">
   <head>
+    <link href="https://fonts.googleapis.com/css?family=Public+Sans&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Public Sans', sans-serif;
+        font-size: 36px;
+      }
+    </style>
     <meta charset="utf-8">
     <title>Examples</title>
   </head>
