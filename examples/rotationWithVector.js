@@ -37,6 +37,7 @@ class Paddle {
         this.center.y = (this.ends[0].y + this.ends[1].y) / 2;
     }
 
+    // REF: http://www.jeffreythompson.org/collision-detection/line-point.php
     intersectsPoints(px, py) {
 
         // get distance from the point to the two ends of the line
@@ -58,6 +59,7 @@ class Paddle {
     }
 }
 
+// REF: https://natureofcode.com/book/chapter-1-vectors/
 class Ball {
     constructor(x, y, color) {
         this.hit = false,
