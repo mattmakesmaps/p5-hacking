@@ -65,7 +65,7 @@ class Ball {
             // this.acceleration = createVector(0,0),
             // Acceleration is random!
             // this.acceleration = p5.Vector.random2D(),
-            // Acceleration Towards the Mouse! (see _accellerationToMous())
+            // Acceleration Towards the Mouse! (see _accelerationToMouse())
             this.acceleration = createVector(0, 0),
             this.velocity = createVector(0, 0),
             this.position = createVector(x, y),
@@ -98,27 +98,24 @@ class Ball {
         point(this.position.x, this.position.y);
     }
 
-    _accellerationToMouse() {
+    _accelerationToMouse() {
         /**
-         * To set accelleration to follow the direction
-         * of the mouse, we set accelleration to a vector
-         * Accelleration = Mouse Position - Ball Position - (Width/2 , Height/2)
+         * To set acceleration to follow the direction
+         * of the mouse, we set acceleration to a vector
+         * Acceleration = Mouse Position - Ball Position - (Width/2 , Height/2)
          * The result vector is then normalized to between 0,1
-         * 
-         * The last is required because of the intial translation, but I
-         * bet could be removed if we use push pop in the main draw().
          */
         let mousePos = createVector(mouseX, mouseY);
         let vecToMousePos = mousePos.sub(this.position);
         this.acceleration = vecToMousePos;
         this.acceleration = this.acceleration.normalize();
-        // will this slow down accelleration?
+        // will this slow down acceleration?
         this.acceleration = this.acceleration.mult(0.25);
     }
 
     updatePosition() {
         if (this.hit) {
-            this._accellerationToMouse();
+            this._accelerationToMouse();
             this.velocity.add(this.acceleration);
             this.velocity.limit(this.topSpeed);
             this.position.add(this.velocity);
@@ -139,7 +136,7 @@ function setup() {
         balls.push(new Ball(x_cord, y_cord, ball_color));
     }
 
-    // Create Paddle in center of screen`
+    // Create Paddle in center of screen
     paddle = new Paddle((windowWidth/2), (windowHeight/2), color(50,50,50), 500);
 }
 
@@ -149,11 +146,6 @@ function draw() {
     // Create a vector representing the translated
     // mouse position.
     let mouseVector = createVector(mouseX, mouseY);
-
-    // The implementation should be updated to not require a new
-    // Paddle each call to draw().
-    // paddle = new Paddle(0, 0, color('teal'), 500);
-    // paddle.setup();
 
     paddle.updatePosition(mouseVector);
     for (let i = 0; i < balls.length; i++) {
@@ -184,6 +176,6 @@ function draw() {
     text('Mouse Heading: ' + mouseVector.heading(), textLeftEdge, textTopEdge);
     text('paddle.ends[0] x/y: ' + floor(paddle.ends[0].x) + ', ' + floor(paddle.ends[0].y), textLeftEdge, textTopEdge + 20);
     text('paddle.ends[1] x/y: ' + floor(paddle.ends[1].x) + ', ' + floor(paddle.ends[1].y), textLeftEdge, textTopEdge + 40);
-    text('Ball 0 Accelleration: ' + balls[0].acceleration.x + ', ' + balls[0].acceleration.y, textLeftEdge, textTopEdge + 60);
+    text('Ball 0 Acceleration: ' + balls[0].acceleration.x + ', ' + balls[0].acceleration.y, textLeftEdge, textTopEdge + 60);
     text('Frame Rate: ' + floor(frameRate()), textLeftEdge, textTopEdge + 80);
 }
