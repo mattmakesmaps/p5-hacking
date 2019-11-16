@@ -109,9 +109,7 @@ class Ball {
          * bet could be removed if we use push pop in the main draw().
          */
         let mousePos = createVector(mouseX, mouseY);
-        let vecToMousePos = mousePos
-            .sub(this.position)
-            .sub(createVector(width/2, height/2));
+        let vecToMousePos = mousePos.sub(this.position);
         this.acceleration = vecToMousePos;
         this.acceleration = this.acceleration.normalize();
         // will this slow down accelleration?
@@ -135,24 +133,22 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
     let ballCount = 2000;
     for (let i = 0; i < ballCount; i++) {
-        let x_cord = map(random(), 0, 1, -(width / 2), (width / 2));
-        let y_cord = map(random(), 0, 1, -(height / 2), (height / 2));
+        let x_cord = map(random(), 0, 1, 0, width);
+        let y_cord = map(random(), 0, 1, 0, height);
         let ball_color = color(229,0,106);
         balls.push(new Ball(x_cord, y_cord, ball_color));
     }
-    paddle = new Paddle(0, 0, color(50,50,50), 500);
+
+    // Create Paddle in center of screen`
+    paddle = new Paddle((windowWidth/2), (windowHeight/2), color(50,50,50), 500);
 }
 
 function draw() {
     background(243,152,0);
-    translate(width / 2, height / 2);
 
     // Create a vector representing the translated
     // mouse position.
-    let mouseVector = createVector(
-        mouseX - (width / 2),
-        mouseY - (height / 2)
-    );
+    let mouseVector = createVector(mouseX, mouseY);
 
     // The implementation should be updated to not require a new
     // Paddle each call to draw().
@@ -183,8 +179,8 @@ function draw() {
     stroke(0);
     strokeWeight(5);
 
-    let textLeftEdge = -(windowWidth/2 - 50);
-    let textTopEdge = -(windowHeight/2 - 50);
+    let textLeftEdge = 50;
+    let textTopEdge = 50;
     text('Mouse Heading: ' + mouseVector.heading(), textLeftEdge, textTopEdge);
     text('paddle.ends[0] x/y: ' + floor(paddle.ends[0].x) + ', ' + floor(paddle.ends[0].y), textLeftEdge, textTopEdge + 20);
     text('paddle.ends[1] x/y: ' + floor(paddle.ends[1].x) + ', ' + floor(paddle.ends[1].y), textLeftEdge, textTopEdge + 40);
