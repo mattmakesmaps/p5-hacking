@@ -109,8 +109,6 @@ class Ball {
             this.position.x = 0;
         }
 
-        // We allow objects to fly past the
-        // top of the window.
         if (this.position.y > windowHeight) {
             this.velocity.y *= -1;
             this.position.y = windowHeight;
@@ -131,22 +129,19 @@ class Ball {
         /**
          * To set acceleration to follow the direction
          * of the mouse, we set acceleration to a vector
-         * Acceleration = Mouse Position - Ball Position - (Width/2 , Height/2)
+         * Acceleration = Mouse Position - Ball Position
          * The result vector is then normalized to between 0,1
+         * and scaled.
          */
         let mousePos = createVector(mouseX, mouseY);
         let vecToMousePos = mousePos.sub(this.position);
         vecToMousePos = vecToMousePos.normalize();
         vecToMousePos.mult(0.1);
         this.applyForce(vecToMousePos);
-        // this.acceleration = this.acceleration.normalize();
-        // // will this slow down acceleration?
-        // this.acceleration = this.acceleration.mult(0.25);
     }
 
     updatePosition() {
         if (this.hit) {
-            //this._accelerationToMouse();
             this.velocity.add(this.acceleration);
             this.velocity.limit(this.topSpeed);
             this.position.add(this.velocity);
@@ -178,11 +173,6 @@ function setup() {
 
 function draw() {
     background(243,152,0);
-
-    // Create a vector representing the translated
-    // mouse position.
-    let mouseVector = createVector(mouseX, mouseY);
-
     let forceWind = createVector(random(-0.5, 0.5), 0);
     let forceGravity = createVector(0, 0.1);
     let netForce = p5.Vector.add(forceGravity, forceWind);
@@ -196,10 +186,10 @@ function draw() {
         // friction affects velocity, not acceleration
         let forceFriction = balls[i].velocity.copy();
         let coefficientOfFriction = 0.05;
-        forceFriction.mult(-1);
-        forceFriction.normalize();
-        forceFriction.mult(coefficientOfFriction);
-        balls[i].applyForce(forceFriction);
+        forceFriction.mult(-1); // direction of friction vector is opposite of velocity
+        forceFriction.normalize(); // scale magnitude to 1, while preserving direction
+        forceFriction.mult(coefficientOfFriction); // scale now normalized vector magnitude by the coefficient of friction
+        balls[i].applyForce(forceFriction); // apply the scaled vector to the ball as a force.
         // end friction
 
         balls[i].updatePosition();
