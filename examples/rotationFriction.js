@@ -10,8 +10,8 @@ class Paddle {
             this.color = color,
             this.length = length
 
-        this.ends.push(new Ball(this.center.x - (this.length / 2), this.center.y, color));
-        this.ends.push(new Ball(this.center.x + (this.length / 2), this.center.y), color);
+        this.ends.push(new Ball(this.center.x - (this.length / 2), this.center.y, color, 2));
+        this.ends.push(new Ball(this.center.x + (this.length / 2), this.center.y), color, 8);
         this.ends[0].hit = true;
         this.ends[1].hit = true;
     }
@@ -27,10 +27,13 @@ class Paddle {
     }
 
     updatePosition(mouseVector) {
+        this.ends[0]._accelerationToMouse();
         this.ends[0].applyForce(mouseVector);
         this.ends[0].updatePosition();
+        this.ends[1]._accelerationToMouse();
         this.ends[1].applyForce(mouseVector);
         this.ends[1].updatePosition();
+
         this.length = dist(this.ends[0].x, this.ends[0].y, this.ends[1].x, this.ends[1].y);
         this.center.x = (this.ends[0].x + this.ends[1].x) / 2;
         this.center.y = (this.ends[0].y + this.ends[1].y) / 2;
@@ -60,14 +63,14 @@ class Paddle {
 
 // REF: https://natureofcode.com/book/chapter-1-vectors/
 class Ball {
-    constructor(x, y, color) {
+    constructor(x, y, color, mass = 1) {
         this.hit = false,
             this.acceleration = createVector(0, 0),
             this.velocity = createVector(0, 0),
             this.position = createVector(x, y),
             this.color = color,
             this.topSpeed = 15,
-            this.mass = 1;
+            this.mass = mass;
     }
 
     // Allows Ball's position to be called like a vector.
@@ -89,9 +92,12 @@ class Ball {
     }
 
     applyForce(force) {
-        this.acceleration.add(
-            p5.Vector.div(force,this.mass)
-            );
+        // Only apply force if ball is hit
+        if (this.hit) {
+            this.acceleration.add(
+                p5.Vector.div(force,this.mass)
+                );
+        }
     }
 
     checkEdges() {
@@ -108,14 +114,17 @@ class Ball {
         if (this.position.y > windowHeight) {
             this.velocity.y *= -1;
             this.position.y = windowHeight;
+        } else if (this.position.y < 0) {
+            this.velocity.y *= -1;
+            this.position.y = 0;
         }
     }
 
     draw() {
         fill(this.color);
-        stroke(this.color);
-        strokeWeight(10);
-        point(this.position.x, this.position.y);
+        strokeWeight(0);
+        ellipse(this.position.x, this.position.y,
+            this.mass*5, this.mass*5);
     }
 
     _accelerationToMouse() {
@@ -127,17 +136,19 @@ class Ball {
          */
         let mousePos = createVector(mouseX, mouseY);
         let vecToMousePos = mousePos.sub(this.position);
-        this.acceleration = vecToMousePos;
-        this.acceleration = this.acceleration.normalize();
-        // will this slow down acceleration?
-        this.acceleration = this.acceleration.mult(0.25);
+        vecToMousePos = vecToMousePos.normalize();
+        vecToMousePos.mult(0.1);
+        this.applyForce(vecToMousePos);
+        // this.acceleration = this.acceleration.normalize();
+        // // will this slow down acceleration?
+        // this.acceleration = this.acceleration.mult(0.25);
     }
 
     updatePosition() {
         if (this.hit) {
             //this._accelerationToMouse();
             this.velocity.add(this.acceleration);
-            //this.velocity.limit(this.topSpeed);
+            this.velocity.limit(this.topSpeed);
             this.position.add(this.velocity);
             // Clear Acceleration Each Iteration
             this.acceleration.mult(0);
@@ -156,7 +167,9 @@ function setup() {
         let x_cord = map(random(), 0, 1, 0, width);
         let y_cord = map(random(), 0, 1, 0, height);
         let ball_color = color(229,0,106);
-        balls.push(new Ball(x_cord, y_cord, ball_color));
+        let ball_mass = Math.floor(Math.random() * 10);
+        balls.push(new Ball(x_cord, y_cord,
+            ball_color, ball_mass));
     }
 
     // Create Paddle in center of screen
@@ -170,7 +183,7 @@ function draw() {
     // mouse position.
     let mouseVector = createVector(mouseX, mouseY);
 
-    let forceWind = createVector(0.01, 0);
+    let forceWind = createVector(random(-0.5, 0.5), 0);
     let forceGravity = createVector(0, 0.1);
     let netForce = p5.Vector.add(forceGravity, forceWind);
     paddle.updatePosition(netForce);
@@ -178,6 +191,17 @@ function draw() {
     for (let i = 0; i < balls.length; i++) {
         balls[i].applyForce(forceWind);
         balls[i].applyForce(forceGravity);
+
+        // begin friction
+        // friction affects velocity, not acceleration
+        let forceFriction = balls[i].velocity.copy();
+        let coefficientOfFriction = 0.05;
+        forceFriction.mult(-1);
+        forceFriction.normalize();
+        forceFriction.mult(coefficientOfFriction);
+        balls[i].applyForce(forceFriction);
+        // end friction
+
         balls[i].updatePosition();
     }
 
