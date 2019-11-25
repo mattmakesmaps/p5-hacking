@@ -60,9 +60,10 @@ if __name__ == "__main__":
 
         # Create the HTML pages for each example
         htmlPath = os.path.join(examplePath, htmlFilename)
-        with open(htmlPath, 'w') as htmlFileHandle:
-            contents = htmlTemplateExample.substitute({'fileName': jsFilename})
-            htmlFileHandle.write(contents)
+        if not os.path.isfile:
+          with open(htmlPath, 'w') as htmlFileHandle:
+              contents = htmlTemplateExample.substitute({'fileName': jsFilename})
+              htmlFileHandle.write(contents)
 
     # Create index.html
     htmlIndexFilePath = os.path.join(os.getcwd(), 'index.html')
