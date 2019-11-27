@@ -168,16 +168,20 @@ function setup() {
     /**
      * Blocks Setup
      */
-    let blockRowCount = 5;
-    let blockWidth = 60;
-    let blockHeight = 20;
-    let blocksPerRow = windowWidth/blockWidth;
-    for (let i = 0; i < blockRowCount; i++) {
-        for (let j = 0; j < blocksPerRow; j++) {
-            let block = new Block(x, y, blockWidth, blockHeight);
-            blocks.push(block);
-        }
-    }
+
+     /**
+      * TODO: SETUP THOSE BLOCKS
+      */
+    // let blockRowCount = 5;
+    // let blockWidth = 60;
+    // let blockHeight = 20;
+    // let blocksPerRow = windowWidth/blockWidth;
+    // for (let i = 0; i < blockRowCount; i++) {
+    //     for (let j = 0; j < blocksPerRow; j++) {
+    //         let block = new Block(x, y, blockWidth, blockHeight);
+    //         blocks.push(block);
+    //     }
+    // }
     let block2 = new Block(500, 200, 60, 20);
     // blocks.push(block1);
     blocks.push(block2);
