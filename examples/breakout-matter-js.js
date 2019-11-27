@@ -60,6 +60,10 @@ class Ball {
         Matter.Body.applyForce(this.body, this.body.position, force);
     }
 
+    updatePosition() {
+
+    }
+
     show() {
         fill(255,241,206);
         let pos = this.body.position;
@@ -137,21 +141,25 @@ function setup() {
      * Wall Setup
      */
     let topWall = new Wall(windowWidth/2, 0, windowWidth, 10);
+    let bottomWall = new Wall(windowWidth/2, windowHeight, windowWidth, 10);
     let leftWall = new Wall(0, windowHeight/2, 10, windowHeight);
     let rightWall = new Wall(windowWidth, windowHeight/2, 10, windowHeight);
-    walls.push(topWall, leftWall, rightWall);
+    walls.push(topWall, leftWall, rightWall, bottomWall);
 
-    let b = new Ball(200, 20, 10);
-    let b1 = new Ball(260, 20, 5);
-    b.applyForce(Matter.Vector.create(4,15));
-    balls.push(b);
-    balls.push(b1);
-    // let block1 = new Block(230, 200, 100, 25);
+    /**
+     * Ball Setup
+     */
+    let ball = new Ball(200, 20, 10);
+    // just gets the ball going
+    ball.applyForce(Matter.Vector.create(4,15));
+    balls.push(ball);
+
+    /**
+     * Blocks Setup
+     */
     let block2 = new Block(500, 200, 25, 200);
-    let block3 = new Block(350, paddle_y_pos + 50, 7000, 10);
     // blocks.push(block1);
     blocks.push(block2);
-    blocks.push(block3);
 
     paddle = new Paddle(300, paddle_y_pos);
 
@@ -163,6 +171,7 @@ function setup() {
         for (var i = 0; i < pairs.length; i++) {
             var pair = pairs[i];
             if (pair.bodyA.label === 'Ball') {
+                pair.bodyA.updatePosition();
                 // Keep direction of Ball vector by normalizing it,
                 // and set the magnitude (speed) to 10 by multiplying it.
                 let velocity = Matter.Vector.clone(pair.bodyA.velocity);
