@@ -28,6 +28,7 @@ class Block {
         this.width = width;
         this.height = height;
         World.add(world, this.body);
+        this.id = this.body.id;
     }
 
     show() {
@@ -54,6 +55,7 @@ class Ball {
         this.radius = radius;
         this.body = Bodies.circle(x, y, radius, this.matter_options);
         World.add(world, this.body);
+        this.id = this.body.id;
     }
 
     applyForce(force) {
@@ -61,8 +63,13 @@ class Ball {
     }
 
     updatePosition() {
-
-    }
+        // Keep direction of Ball vector by normalizing it,
+        // and set the magnitude (speed) to 10 by multiplying it.
+        let velocity = Matter.Vector.clone(this.body.velocity);
+        velocity = Matter.Vector.normalise(velocity);
+        velocity = Matter.Vector.mult(velocity, 10);
+        Matter.Body.setVelocity(this.body, velocity);
+}
 
     show() {
         fill(255,241,206);
@@ -84,14 +91,11 @@ class Paddle {
         this.width = width;
         this.height = height;
         World.add(world, this.body);
+        this.id = this.body.id;
     }
 
     updatePosition(x,y) {
         let newPosition = Matter.Vector.create(x,y);
-        // let vectorToNewPosition = Matter.Vector.sub(newPosition, this.body.position);
-        // let forceToNewPosition = Matter.Vector.normalise(vectorToNewPosition);
-        // forceToNewPosition = Matter.Vector.mult(forceToNewPosition, 0.01);
-        // Matter.Body.applyForce(this.body, this.body.position, forceToNewPosition);
         Matter.Body.setPosition(this.body, newPosition);
     }
 
@@ -116,6 +120,7 @@ class Wall {
         this.width = width;
         this.height = height;
         World.add(world, this.body);
+        this.id = this.body.id;
     }
 
     show() {
@@ -171,13 +176,12 @@ function setup() {
         for (var i = 0; i < pairs.length; i++) {
             var pair = pairs[i];
             if (pair.bodyA.label === 'Ball') {
-                pair.bodyA.updatePosition();
-                // Keep direction of Ball vector by normalizing it,
-                // and set the magnitude (speed) to 10 by multiplying it.
-                let velocity = Matter.Vector.clone(pair.bodyA.velocity);
-                velocity = Matter.Vector.normalise(velocity);
-                velocity = Matter.Vector.mult(velocity, 10);
-                Matter.Body.setVelocity(pair.bodyA, velocity);
+                let ballID = pair.bodyA.id;
+                for (ball of balls) {
+                    if (ball.id === ballID){
+                        ball.updatePosition();
+                    }
+                }
             }
         }
     });
@@ -185,7 +189,7 @@ function setup() {
 
 function draw() {
     background(65);
-    //console.log(balls[0].body.speed)
+    console.log(balls[0].body.speed)
 
     Engine.update(engine);
 
