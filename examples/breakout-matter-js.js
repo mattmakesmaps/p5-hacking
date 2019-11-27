@@ -6,6 +6,7 @@ let Engine = Matter.Engine;
 let World = Matter.World;
 let Bodies = Matter.Bodies;
 let Events = Matter.Events;
+let Composite = Matter.Composite;
 
 let engine;
 let world;
@@ -36,6 +37,11 @@ class Block {
         let pos = this.body.position;
         rectMode(CENTER); // matter.js uses x/y as center of rect, not UL corner.
         rect(pos.x,pos.y,this.width, this.height);
+    }
+
+    destory() {
+        Composite.remove(world,this.body); // matter.js
+        blocks = blocks.filter(block => block.id !== this.id); // p5.js
     }
 }
 
@@ -175,11 +181,23 @@ function setup() {
 
         for (var i = 0; i < pairs.length; i++) {
             var pair = pairs[i];
+
+            // Accellerate the Ball
             if (pair.bodyA.label === 'Ball') {
                 let ballID = pair.bodyA.id;
                 for (ball of balls) {
                     if (ball.id === ballID){
                         ball.updatePosition();
+                    }
+                }
+            }
+
+            // Destroy the block
+            if (pair.bodyA.label === 'Ball' && pair.bodyB.label === 'Block') {
+                let blockID = pair.bodyB.id;
+                for (block of blocks) {
+                    if (block.id === blockID){
+                        block.destory();
                     }
                 }
             }
