@@ -59,6 +59,7 @@ class Ball {
             frictionAir: 0,
             frictionStatic: 0
         }
+        this.startPosition = Matter.Vector.create(x,y);
         this.radius = radius;
         this.body = Bodies.circle(x, y, radius, this.matter_options);
         World.add(world, this.body);
@@ -69,9 +70,17 @@ class Ball {
         Matter.Body.applyForce(this.body, this.body.position, force);
     }
 
+    checkEdges() {
+        // Hack to reset ball if offscreen
+        if (this.body.position.y > windowHeight) {
+            console.log('resetting position');
+            Matter.Body.setPosition(this.body, this.startPosition);
+        }
+    }
+
     updatePosition() {
         // Keep direction of Ball vector by normalizing it,
-        // and set the magnitude (speed) to 10 by multiplying it.
+        // and set the magnitude (speed) to 8 by multiplying it.
         let velocity = Matter.Vector.clone(this.body.velocity);
         velocity = Matter.Vector.normalise(velocity);
         velocity = Matter.Vector.mult(velocity, 8);
@@ -146,6 +155,13 @@ const colorPalletes = {
         [168, 218, 220],
         [69, 123, 157],
         [29, 53, 87]
+    ],
+    'down2': [
+        [38, 70, 83],
+        [42, 157, 143],
+        [233, 196, 106],
+        [244, 162, 97],
+        [231, 111, 81]
     ]
 }
 
@@ -185,15 +201,14 @@ function setup() {
      * Wall Setup
      */
     let topWall = new Wall(windowWidth/2, 0, windowWidth, 10);
-    let bottomWall = new Wall(windowWidth/2, windowHeight, windowWidth, 10);
     let leftWall = new Wall(0, windowHeight/2, 10, windowHeight);
     let rightWall = new Wall(windowWidth, windowHeight/2, 10, windowHeight);
-    walls.push(topWall, leftWall, rightWall, bottomWall);
+    walls.push(topWall, leftWall, rightWall);
 
     /**
      * Ball Setup
      */
-    let ball = new Ball(windowWidth/2, paddle_y_pos - 50, 10);
+    let ball = new Ball(windowWidth/2, paddle_y_pos - 200, 10);
     // just gets the ball going
     ball.applyForce(Matter.Vector.create(3,8));
     balls.push(ball);
@@ -202,8 +217,12 @@ function setup() {
      * Blocks Setup
      */
     let blockGridSetup = blockGridPattern['basic'];
-    blockGridSetup(colorPalletes['royal']);
+    let colorPallete = colorPalletes['down2'];
+    blockGridSetup(colorPallete);
 
+    /**
+     * Paddle Setup
+     */
     paddle = new Paddle(300, paddle_y_pos);
 
     // REF: https://github.com/liabru/matter-js/blob/master/examples/events.js#L53
@@ -250,6 +269,7 @@ function draw() {
     }
 
     for (ball of balls) {
+        ball.checkEdges();
         ball.show();
     }
 
