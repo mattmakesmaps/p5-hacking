@@ -17,7 +17,7 @@ let paddle;
 let paddle_y_pos;
 
 class Block {
-    constructor(x, y, width, height) {
+    constructor(x, y, width, height, color=[0,255,0]) {
         this.matter_options = {
             label: 'Block',
             isStatic: true,
@@ -30,10 +30,11 @@ class Block {
         this.height = height;
         World.add(world, this.body);
         this.id = this.body.id;
+        this.color = color;
     }
 
     show() {
-        fill(214,71,0);
+        fill(this.color);
         let pos = this.body.position;
         rectMode(CENTER); // matter.js uses x/y as center of rect, not UL corner.
         rect(pos.x,pos.y,this.width, this.height);
@@ -73,7 +74,7 @@ class Ball {
         // and set the magnitude (speed) to 10 by multiplying it.
         let velocity = Matter.Vector.clone(this.body.velocity);
         velocity = Matter.Vector.normalise(velocity);
-        velocity = Matter.Vector.mult(velocity, 10);
+        velocity = Matter.Vector.mult(velocity, 8);
         Matter.Body.setVelocity(this.body, velocity);
 }
 
@@ -130,11 +131,43 @@ class Wall {
     }
 
     show() {
-        noStroke();
         fill(80);
         let pos = this.body.position;
         rectMode(CENTER); // matter.js uses x/y as center of rect, not UL corner.
         rect(pos.x,pos.y,this.width, this.height);
+    }
+}
+
+// REF: colors.co
+const colorPalletes = {
+    'royal': [
+        [230, 57, 70],
+        [241, 250, 238],
+        [168, 218, 220],
+        [69, 123, 157],
+        [29, 53, 87]
+    ]
+}
+
+const blockGridPattern = {
+    'basic' : function (colorPallete) {
+        let blockRowCount = 7;
+        let blockWidth = 60;
+        let blockHeight = 20;
+        let blocksPerRow = windowWidth/blockWidth;
+        let palleteIndex = 0;
+        for (let i = 0; i < blockRowCount; i++) {
+            palleteIndex += 1;
+            if (palleteIndex >= colorPallete.length) {
+                palleteIndex = 0;
+            }
+            let fillColor = colorPallete[palleteIndex];
+            console.log(fillColor);
+            for (let j = 0; j < blocksPerRow; j++) {
+                let block = new Block(j * blockWidth, 100 + (i * blockHeight), blockWidth, blockHeight, fillColor);
+                blocks.push(block);
+            }
+        }
     }
 }
 
@@ -160,31 +193,16 @@ function setup() {
     /**
      * Ball Setup
      */
-    let ball = new Ball(200, 20, 10);
+    let ball = new Ball(windowWidth/2, paddle_y_pos - 50, 10);
     // just gets the ball going
-    ball.applyForce(Matter.Vector.create(4,15));
+    ball.applyForce(Matter.Vector.create(3,8));
     balls.push(ball);
 
     /**
      * Blocks Setup
      */
-
-     /**
-      * TODO: SETUP THOSE BLOCKS
-      */
-    // let blockRowCount = 5;
-    // let blockWidth = 60;
-    // let blockHeight = 20;
-    // let blocksPerRow = windowWidth/blockWidth;
-    // for (let i = 0; i < blockRowCount; i++) {
-    //     for (let j = 0; j < blocksPerRow; j++) {
-    //         let block = new Block(x, y, blockWidth, blockHeight);
-    //         blocks.push(block);
-    //     }
-    // }
-    let block2 = new Block(500, 200, 60, 20);
-    // blocks.push(block1);
-    blocks.push(block2);
+    let blockGridSetup = blockGridPattern['basic'];
+    blockGridSetup(colorPalletes['royal']);
 
     paddle = new Paddle(300, paddle_y_pos);
 
@@ -221,7 +239,6 @@ function setup() {
 
 function draw() {
     background(65);
-    console.log(balls[0].body.speed)
 
     Engine.update(engine);
 
