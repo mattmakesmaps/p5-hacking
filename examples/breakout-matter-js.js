@@ -19,7 +19,10 @@ class Block {
     constructor(x, y, width, height) {
         this.matter_options = {
             label: 'Block',
-            isStatic: true
+            isStatic: true,
+            friction: 0,
+            frictionAir: 0,
+            frictionStatic: 0
         }
         this.body = Bodies.rectangle(x, y, width, height, this.matter_options);
         this.width = width;
@@ -45,7 +48,8 @@ class Ball {
             restitution: 1,
             density: 1,
             friction: 0,
-            frictionAir: 0
+            frictionAir: 0,
+            frictionStatic: 0
         }
         this.radius = radius;
         this.body = Bodies.circle(x, y, radius, this.matter_options);
@@ -66,7 +70,11 @@ class Ball {
 class Paddle {
     constructor(x, y, width=100, height=25) {
         this.matter_options = {
-            label: 'Paddle'
+            label: 'Paddle',
+            isStatic: true,
+            friction: 0,
+            frictionAir: 0,
+            frictionStatic: 0
         }
         this.body = Bodies.rectangle(x, y, width, height, this.matter_options);
         this.width = width;
@@ -95,7 +103,10 @@ class Wall {
     constructor(x, y, width, height) {
         this.matter_options = {
             label: 'Wall',
-            isStatic: true
+            isStatic: true,
+            friction: 0,
+            frictionAir: 0,
+            frictionStatic: 0
         }
         this.body = Bodies.rectangle(x, y, width, height, this.matter_options);
         this.width = width;
@@ -132,12 +143,12 @@ function setup() {
 
     let b = new Ball(200, 20, 10);
     let b1 = new Ball(260, 20, 5);
-    b.applyForce(Matter.Vector.create(0.0,4));
+    b.applyForce(Matter.Vector.create(4,15));
     balls.push(b);
     balls.push(b1);
     // let block1 = new Block(230, 200, 100, 25);
     let block2 = new Block(500, 200, 25, 200);
-    let block3 = new Block(350, paddle_y_pos + 12.5, 7000, 10);
+    let block3 = new Block(350, paddle_y_pos + 50, 7000, 10);
     // blocks.push(block1);
     blocks.push(block2);
     blocks.push(block3);
@@ -146,20 +157,18 @@ function setup() {
 
     // REF: https://github.com/liabru/matter-js/blob/master/examples/events.js#L53
     // an example of using collisionStart event on an engine
-    Events.on(engine, 'collisionStart', function(event) {
+    Events.on(engine, 'collisionEnd', function(event) {
         var pairs = event.pairs;
 
         for (var i = 0; i < pairs.length; i++) {
             var pair = pairs[i];
-            if (pair.bodyA.label === 'Ball' && pair.bodyB.label === 'Paddle') {
-                console.log(pair);
-                // Reversing and normalizing the velocity so that it can
-                // be scaled by an arbitrary factor.
+            if (pair.bodyA.label === 'Ball') {
+                // Keep direction of Ball vector by normalizing it,
+                // and set the magnitude (speed) to 10 by multiplying it.
                 let velocity = Matter.Vector.clone(pair.bodyA.velocity);
-                let reverseVelocity = Matter.Vector.neg(velocity);
-                reverseVelocity = Matter.Vector.normalise(reverseVelocity);
-                reverseVelocity = Matter.Vector.mult(reverseVelocity, 10);
-                Matter.Body.setVelocity(pair.bodyA, reverseVelocity);
+                velocity = Matter.Vector.normalise(velocity);
+                velocity = Matter.Vector.mult(velocity, 10);
+                Matter.Body.setVelocity(pair.bodyA, velocity);
             }
         }
     });
@@ -167,6 +176,7 @@ function setup() {
 
 function draw() {
     background(65);
+    //console.log(balls[0].body.speed)
 
     Engine.update(engine);
 
