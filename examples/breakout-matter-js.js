@@ -42,6 +42,10 @@ class Block {
 
     destory() {
         Composite.remove(world,this.body); // matter.js
+        // push();
+        //     scale(2);
+        //     this.show();
+        // pop();
         blocks = blocks.filter(block => block.id !== this.id); // p5.js
     }
 }
@@ -167,7 +171,7 @@ const colorPalletes = {
 
 const blockGridPattern = {
     'basic' : function (colorPallete) {
-        let blockRowCount = 7;
+        let blockRowCount = 8;
         let blockWidth = 60;
         let blockHeight = 20;
         let blocksPerRow = windowWidth/blockWidth;
@@ -217,7 +221,7 @@ function setup() {
      * Blocks Setup
      */
     let blockGridSetup = blockGridPattern['basic'];
-    let colorPallete = colorPalletes['down2'];
+    let colorPallete = colorPalletes['royal'];
     blockGridSetup(colorPallete);
 
     /**
